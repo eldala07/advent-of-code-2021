@@ -54,17 +54,65 @@ const computePowerConsumption = ({gammaRate, epsilonRate}) => gammaRate * epsilo
 let [gammaRate, epsilonRate] = computeGammaAndEpsilonRates(exampleInput);
 let powerConsumption = computePowerConsumption({gammaRate, epsilonRate});
 
-console.log("PART1 - gamma rate: ", gammaRate)
-console.log("PART1 - epsilon rate: ", epsilonRate)
-console.log("PART1 - power consumption: ", powerConsumption)
+console.log("PART1 - ex gamma rate: ", gammaRate)
+console.log("PART1 - ex epsilon rate: ", epsilonRate)
+console.log("PART1 - ex power consumption: ", powerConsumption)
 
 
 // real results
 let [gammaRateReal, epsilonRateReal] = computeGammaAndEpsilonRates(realInput);
 powerConsumption = computePowerConsumption({gammaRate: gammaRateReal, epsilonRate: epsilonRateReal});
 
-console.log("PART2 - gamma rate: ", gammaRateReal)
-console.log("PART2 - epsilon rate: ", epsilonRateReal)
-console.log("PART2 - power consumption: ", powerConsumption)
+console.log("PART1 - real gamma rate: ", gammaRateReal)
+console.log("PART1 - real epsilon rate: ", epsilonRateReal)
+console.log("PART1 - real power consumption: ", powerConsumption)
 
 // PART 2
+
+const computeOxygenGeneratorAndCO2ScrubberRatings = (input) => {
+    let oxygenGeneratorNumbers = [...input].map(binary => binary.split(""));
+    let co2ScrubberNumbers = [...oxygenGeneratorNumbers];
+    let currentIndex = 0;
+
+    while (oxygenGeneratorNumbers?.length > 1) {
+        const tempOxygenArray = [];
+        oxygenGeneratorNumbers.forEach(binaryArray => {
+            tempOxygenArray.push(binaryArray[currentIndex]);
+        });
+
+        const oxygenMostCommonValue = tempOxygenArray.filter(numbers => numbers === "1")?.length >= tempOxygenArray.length / 2 ? "1" : "0";
+
+        oxygenGeneratorNumbers = oxygenGeneratorNumbers.filter(binaryArray => binaryArray[currentIndex] === oxygenMostCommonValue);
+
+        currentIndex++;
+    }
+
+    currentIndex = 0;
+    while (co2ScrubberNumbers?.length > 1) {
+        const tempCo2ScrubberArray = [];
+        co2ScrubberNumbers.forEach(binaryArray => {
+            tempCo2ScrubberArray.push(binaryArray[currentIndex]);
+        });
+
+        const co2LessCommonValue = tempCo2ScrubberArray.filter(numbers => numbers === "0")?.length <= tempCo2ScrubberArray.length / 2 ? "0" : "1";
+
+        co2ScrubberNumbers = co2ScrubberNumbers.filter(binaryArray => binaryArray[currentIndex] === co2LessCommonValue);
+
+        currentIndex++;
+    }
+    if (!oxygenGeneratorNumbers?.length || !co2ScrubberNumbers?.length) {
+        return [0, 0];
+    }
+    return [binaryToDecimal(oxygenGeneratorNumbers[0].join("")), binaryToDecimal(co2ScrubberNumbers[0].join(""))];
+};
+
+// results
+const [oxygenGeneratorRating, co2ScrubberRating] = computeOxygenGeneratorAndCO2ScrubberRatings(exampleInput);
+console.log("PART 2 - ex Oxygen generator rating: ", oxygenGeneratorRating);
+console.log("PART 2 - ex CO2 scrubber rating: ", co2ScrubberRating);
+console.log("PART 2 - ex Life support rating: ", oxygenGeneratorRating * co2ScrubberRating);
+
+const [realOxygenGeneratorRating, realCo2ScrubberRating] = computeOxygenGeneratorAndCO2ScrubberRatings(realInput);
+console.log("PART 2 - real Oxygen generator rating: ", realOxygenGeneratorRating);
+console.log("PART 2 - real CO2 scrubber rating: ", realCo2ScrubberRating);
+console.log("PART 2 - real Life support rating: ", realOxygenGeneratorRating * realCo2ScrubberRating);
